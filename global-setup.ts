@@ -7,22 +7,20 @@ async function globalSetup() {
   const page: Page = await context.newPage();
 
   try {
-    
-
-    await page.goto(`${process.env.BASE_URL}/family-file/create`, {
-      waitUntil: 'networkidle', // Wait for network requests to finish
-      timeout:160000
-    });
-    
+    await page.goto(`${process.env.BASE_URL}/family-file/create`);
     await page.waitForTimeout(1000);
-    await page.getByText('Continue with Google').click();
+    const newTabPromise = page.waitForEvent("popup");
+    await page.getByText('Log in').click()
+    const newTab = await newTabPromise;
+    await newTab.waitForLoadState();
+    await newTab.getByText('Continue with Google').click();
 
-    await page.locator('#identifierId').fill(process.env.GOOGLE_EMAIL || '');
-    await page.locator('#identifierNext').click();
-    await page.locator('[type="password"]').fill(process.env.GOOGLE_PASSWORD || '');
-    await page.locator('[type="button"]:has-text("Next")').click();
-
-    await page.waitForURL(/create/, { timeout: 10000 });
+    await newTab.locator('#identifierId').fill(process.env.GOOGLE_EMAIL || '');
+    await newTab.locator('#identifierNext').click();
+    await newTab.locator('[type="password"]').fill(process.env.GOOGLE_PASSWORD || '');
+    await newTab.locator('[type="button"]:has-text("Next")').click();
+    await page.goto(`${process.env.BASE_URL}/family-file/create`);
+    await page.waitForURL(/create/, {waitUntil:'networkidle'});
 
     // Save the browser state
     await page.context().storageState({ path: './playwright/LoginAuth.json' });
