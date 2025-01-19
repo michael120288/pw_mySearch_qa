@@ -2,7 +2,7 @@ import { Locator, Page, expect } from "@playwright/test";
 export class FamilyFilePage {
   page: Page;
 
-  constructor(page) {
+  constructor(page:Page) {
     this.page = page;
   }
   get firstName() {
