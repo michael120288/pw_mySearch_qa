@@ -26,7 +26,10 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['list'], // Console output
+    ['html', { outputFolder: 'test-results/html-report', open: 'never' }], // Save HTML report
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     storageState:"./playwright/LoginAuth.json",
@@ -42,7 +45,7 @@ export default defineConfig({
     {
       name: 'chromium',
       use: { ...devices['Desktop Chrome']
-    ,headless:false },
+    ,headless:true },
     },
 
     // {

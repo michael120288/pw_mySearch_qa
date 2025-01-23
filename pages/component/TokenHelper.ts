@@ -20,7 +20,7 @@ export class TokenTestHelper {
     try {
       this.email = this.generateCustomEmail();
       console.log(`[INFO] Generated Email: ${this.email}`);
-      this.token = this.generateToken(this.email, `${process.env.FAMILY_FILE}`);
+      this.token = this.generateToken(this.email, Number(`${process.env.FAMILY_FILE}`));
       process.env.MY_SEARCH_TOKEN = this.token;
 
       console.log(`[INFO] Generated Token: ${this.token}`);
@@ -35,7 +35,7 @@ export class TokenTestHelper {
     }
   }
 
-  private generateToken(email: string, familyFileId: string): string {
+  private generateToken(email: string, familyFileId: number): string {
     const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
       throw new Error("JWT_SECRET is not defined");

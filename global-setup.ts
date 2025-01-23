@@ -2,6 +2,10 @@ import { chromium, Browser, Page } from '@playwright/test';
 
 
 async function globalSetup() {
+  if (process.env.SKIP_GLOBAL_SETUP == 'true') {
+    console.log('Skipping global setup...');
+    return;
+  }
   const browser: Browser = await chromium.launch({ headless: false });
   const context = await browser.newContext();
   const page: Page = await context.newPage();

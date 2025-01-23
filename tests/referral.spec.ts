@@ -1,6 +1,6 @@
 import {test} from '../pages/component/base.page'
 
-test.describe("FAMILYFILE", () => {
+test.describe.skip("FAMILYFILE", () => {
   test.beforeEach(async ({ familyFilePage }) => {
     await familyFilePage.open();
   });

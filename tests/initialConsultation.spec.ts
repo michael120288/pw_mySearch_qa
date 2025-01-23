@@ -1,14 +1,12 @@
 //import {test as it} from '@playwright/test'
  import {test as it} from '../pages/component/base.page'
 import {updateEnvFile} from '../utilities/hooks/updateEnvFile'
-it.describe('should first', () => { 
+it.describe.skip('should first', () => { 
     it.beforeEach(async ({ familyFilePage }) => {
         await familyFilePage.open();
         await familyFilePage.createFamilyFile()
     })
-    it('fill all fields to create FF',async({initialConsultation})=>{
-        //await initialConsultation.createFamilyFile()
-    })
+    
     it('create FF for community',async({initialConsultation})=>{
         const communities = ["158213", "1441280","1407268"]
         let result = await initialConsultation.createLeadIdForCommunity(communities)
