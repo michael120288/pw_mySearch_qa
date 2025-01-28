@@ -8,6 +8,7 @@ import {
 import { test as it } from "../../pages/component/base.page";
 import { TokenTestHelper } from "../../pages/component/TokenHelper";
 import { json } from "stream/consumers";
+import { toCamelCase } from "../../utilities/hooks/camelCase";
 it.describe("CARE OPTIONS", () => {
   let tokenHelper: TokenTestHelper;
   let browser: Browser;
@@ -40,6 +41,7 @@ it.describe("CARE OPTIONS", () => {
   });
   it("C75536 careOptions - thumbnail", async ({ careOptions, request }) => {
     const tokenData = tokenHelper.getToken();
+
     const careOption = await careOptions
       .findCareOptions(request, tokenData)
       .then((el) => el.json());
@@ -51,6 +53,57 @@ it.describe("CARE OPTIONS", () => {
       console.log(thumbnail, "thumbnail");
       const normalizedThumbnail = thumbnail === null ? null : String(thumbnail);
       expect(community.thumbnailId).toEqual(normalizedThumbnail);
+    }
+  });
+  it("C75537 careOptions - careTypes ", async ({ careOptions, request }) => {
+    const tokenData = tokenHelper.getToken();
+
+    const careOption = await careOptions
+      .findCareOptions(request, tokenData)
+      .then((el) => el.json());
+    let count = 0;
+    //console.log(careOption);
+    for (const community of careOption.communities) {
+      const careTypeLength = await community["careTypes"].length;
+      const careTypesSize = await careOptions.findCareTypes(
+        Number(community.id)
+      );
+      if (careTypeLength === 0) {
+        expect(careTypesSize).toBe(0);
+      } else {
+        //console.log(await careTypesSize,'careTypesSize');
+        for (const careType of community["careTypes"]) {
+          const key = toCamelCase(careType);
+          if (key === "nursingHomes") {
+            console.log(key, "key");
+            expect(careTypesSize["nursingHome"]).toBeTruthy();
+            continue;
+          }
+          console.log(careTypesSize[key], "careTypesSize[key]");
+          expect(careTypesSize[key]).toBeTruthy();
+        }
+      }
+      Object.keys(careTypesSize).forEach((careType) => {
+        if (careTypesSize[careType]) {
+          count += 1;
+        }
+      });
+      expect(count).toBe(careTypeLength);
+      count = 0;
+    }
+  });
+  it.only("C75538	careOptions - isCustomer", async ({
+    careOptions,
+    request,
+  }) => {
+    const tokenData = tokenHelper.getToken();
+    const careOption = await careOptions
+      .findCareOptions(request, tokenData)
+      .then((el) => el.json());
+    for (const community of careOption.communities) {
+      expect(community["isCustomer"]).toBe(
+        await careOptions.findIsCustomer(Number(community.id))
+      );
     }
   });
 });

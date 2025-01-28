@@ -73,4 +73,30 @@ export class CareOptions {
     }
     return null;
   }
+  async findCareTypes(community: number) {
+    const communityData = await connectToMongo(
+      `${process.env.MONGO_ENV}`,
+      "communities",
+      { id: community }
+    );
+    if (communityData.careTypes.length === 0) {
+      return 0;
+    }
+    return communityData.careTypes;
+  }
+  async findIsCustomer(community: number): Promise<boolean | null> {
+    try {
+      const communityData = await connectToMongo(
+        `${process.env.MONGO_ENV}`,
+        "communities",
+        { id: community }
+      );
+  
+      // Return the isCustomer value, or null if the data is not found
+      return communityData?.isCustomer ?? null;
+    } catch (error) {
+      console.error(`Error fetching community data for ID ${community}:`, error);
+      return null; // Return null in case of an error
+    }
+  }
 }
