@@ -92,7 +92,7 @@ it.describe("CARE OPTIONS", () => {
       count = 0;
     }
   });
-  it.only("C75538	careOptions - isCustomer", async ({
+  it("C75538	careOptions - isCustomer", async ({
     careOptions,
     request,
   }) => {
@@ -102,7 +102,21 @@ it.describe("CARE OPTIONS", () => {
       .then((el) => el.json());
     for (const community of careOption.communities) {
       expect(community["isCustomer"]).toBe(
-        await careOptions.findIsCustomer(Number(community.id))
+        await careOptions.findCommunityData(Number(community.id),"isCustomer")
+      );
+    }
+  });
+  it.only("C75539 careOptions - isBestOfSeniorLiving", async ({
+    careOptions,
+    request,
+  }) => {
+    const tokenData = tokenHelper.getToken();
+    const careOption = await careOptions
+      .findCareOptions(request, tokenData)
+      .then((el) => el.json());
+    for (const community of careOption.communities) {
+      expect(community["isBestOfSeniorLiving"]).toBe(
+        await careOptions.findCommunityData(Number(community.id),'isBestOfSeniorLiving')
       );
     }
   });
